@@ -103,3 +103,33 @@ For AUR deployment to work, you need to add these GitHub Secrets:
 ## License
 
 MIT
+
+---
+
+## Fork add-on: hosted SVG + MCP
+
+This fork keeps the CLI and adds a stdlib-only Python toolkit:
+
+- **`tools/ghheat.py`** — render any public user's contributions as **SVG** with GitHub's exact current palettes (light/dark), no auth, no external service:
+  ```bash
+  python3 tools/ghheat.py gen cgycorey --out heatmaps/cgycorey.svg      # light
+  python3 tools/ghheat.py gen cgycorey --dark --out cgycorey-dark.svg   # dark
+  python3 tools/ghheat.py fetch cgycorey                                # {date: level} JSON
+  ```
+- **`tools/mcp_server.py`** — MCP server exposing `generate_contribution_heatmap` (SVG string + base64 data URL + 12-month total) and `compare_contribution_activity` (rank users by contributions). Register it:
+  ```json
+  {"command": "python3", "args": ["tools/mcp_server.py"], "cwd": "/path/to/gh-heat"}
+  ```
+  (`pip install -r requirements-mcp.txt`, or the MCP SDK is already present in most agent venvs.)
+- **`.github/workflows/refresh-heatmaps.yml`** — regenerates `heatmaps/` daily (04:00 UTC) and deploys to GitHub Pages — free hosting, no third-party service:
+  - Pages (cdn, cached, pretty URL): `https://cgycorey.github.io/gh-heat/cgycorey.svg` / `...-dark.svg`
+  - Raw (no Pages needed): `https://raw.githubusercontent.com/cgycorey/gh-heat/main/heatmaps/cgycorey.svg`
+
+Embed in a README with the theme-adaptive pattern:
+
+```html
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://cgycorey.github.io/gh-heat/cgycorey-dark.svg" />
+  <img src="https://cgycorey.github.io/gh-heat/cgycorey.svg" alt="contributions" width="100%" />
+</picture>
+```

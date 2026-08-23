@@ -1,0 +1,49 @@
+name: refresh heatmaps
+
+on:
+  schedule:
+    - cron: "0 5 * * *"   # daily 05:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: refresh-heatmaps
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate heatmaps
+        run: |
+          python3 tools/ghheat.py gen cgycorey --out heatmaps/cgycorey.svg
+          python3 tools/ghheat.py gen cgycorey --dark --out heatmaps/cgycorey-dark.svg
+
+      - name: Commit and push
+        run: |
+          git config user.name "cgycorey"
+          git config user.email "4724788+cgycorey@users.noreply.github.com"
+          git add heatmaps
+          if git diff --cached --quiet; then
+            echo "heatmaps current — nothing to commit"
+          else
+            git commit -m "heatmaps: refresh $(date -u +%F)"
+            git push
+          fi
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: heatmaps
+
+      - name: Deploy Pages
+        uses: actions/deploy-pages@v4
