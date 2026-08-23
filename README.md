@@ -123,7 +123,7 @@ This fork keeps the CLI and adds a stdlib-only Python toolkit:
   (`pip install -r requirements-mcp.txt`, or the MCP SDK is already present in most agent venvs.)
 - **`.github/workflows/refresh-heatmaps.yml`** — regenerates `heatmaps/` daily (04:00 UTC) and deploys to GitHub Pages — free hosting, no third-party service:
   - Pages (cdn, cached, pretty URL): `https://cgycorey.github.io/gh-heat/cgycorey.svg` / `...-dark.svg`
-  - Raw (no Pages needed): `https://raw.githubusercontent.com/cgycorey/gh-heat/main/heatmaps/cgycorey.svg`
+  - Raw (no Pages needed): `https://raw.githubusercontent.com/cgycorey/gh-heat/master/heatmaps/cgycorey.svg`
 
 Embed in a README with the theme-adaptive pattern:
 
